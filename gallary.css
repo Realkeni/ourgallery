@@ -1,0 +1,280 @@
+/* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: sans-serif;
+}
+
+input {
+    display: none;
+}
+
+/* Container Styling */
+.container {
+    width: 100%;
+    text-align: center;
+}
+
+h1 {
+    font-weight: normal;
+    font-size: 35px;
+    position: relative;
+    margin: 40px 0;
+}
+
+h1::before {
+    content: '';
+    position: absolute;
+    width: 100px;
+    height: 3px;
+    background-color: #1b1b9b;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    animation: animate 4s linear infinite;
+}
+
+@keyframes animate {
+    0%, 100% {
+        width: 100px;
+    }
+    50% {
+        width: 200px;
+    }
+}
+
+.top-content {
+    background-color: rgb(243, 243, 243);
+    width: 90%;
+    margin: 0 auto 20px auto;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    border-radius: 5px;
+    box-shadow: 3px 3px 5px lightgray;
+}
+
+h3 {
+    height: 100%;
+    background-color: #1b1b9b;
+    line-height: 60px;
+    padding: 0 50px;
+    color: white;
+}
+
+label {
+    display: inline-block;
+    height: 100%;
+    margin: 0 20px;
+    line-height: 60px;
+    font-size: 18px;
+    color: gray;
+    cursor: pointer;
+    transition: color .5s;
+}
+
+label:hover {
+    color: #1b1b9b;
+}
+
+/* Gallery Styling */
+.photo-gallery {
+    width: 90%;
+    margin: auto;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-gap: 20px;
+}
+
+.pic {
+    position: relative;
+    height: 230px;
+    border-radius: 10px;
+    box-shadow: 3px 3px 5px lightgray;
+    cursor: pointer;
+    transition: .5s;
+    display: none; /* Hide all initially */
+}
+
+.pic img {
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+    transition: .5s;
+}
+
+.pic::before {
+    content: "PHOTO GALLERY";
+    position: absolute;
+    text-align: center;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 22px;
+    font-weight: bold;
+    width: 100%;
+    margin-top: -100px;
+    opacity: 0;
+    transition: .3s;
+    transition-delay: .2s;
+}
+
+.pic:after {
+    content: "";
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+    left: 0;
+    border-radius: 10px;
+    height: 0;
+    background-color: rgba(0, 0, 0, .4);
+    transition: .3s;
+}
+
+@keyframes pop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    50% { transform: translateX(5px); }
+    75% { transform: translateX(-5px); }
+}
+
+.pic:hover {
+    animation: pop 0.5s ease forwards, shake 0.5s ease forwards;
+}
+
+.pic:hover::before {
+    opacity: 1;
+    margin-top: 0;
+}
+
+.pic:hover:after {
+    height: 100%;
+}
+
+/* Filter Logic */
+#check1:checked ~ .photo-gallery .pic {
+    display: block; /* Show all for "All Photos" */
+}
+
+#check2:checked ~ .photo-gallery .family {
+    display: block; /* Show family photos */
+}
+
+#check3:checked ~ .photo-gallery .child {
+    display: block; /* Show child's photos */
+}
+
+#check4:checked ~ .photo-gallery .place {
+    display: block; /* Show visited places */
+}
+
+label.active {
+    background-color: #ddd; /* Active color */
+    font-weight: bold;
+    color: #1b1b9b;
+}
+
+
+/* Mobile Responsiveness */
+@media (max-width: 1200px) {
+    .photo-gallery {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .photo-gallery {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .photo-gallery {
+        grid-template-columns: 1fr;
+    }
+
+    h1 {
+        font-size: 28px;
+    }
+
+    h3 {
+        padding: 0 20px;
+    }
+
+    label {
+        font-size: 16px;
+        margin: 0 10px;
+    }
+}
+
+
+import React, { useEffect } from "react";
+import Image from "next/image";
+import "./Gallery.css"; // Ensure this CSS file is imported
+
+const Gallery = () => {
+  useEffect(() => {
+    const labels = document.querySelectorAll(".filter-controls label");
+    labels.forEach(label => {
+      label.addEventListener("click", function() {
+        labels.forEach(l => l.classList.remove("active"));
+        this.classList.add("active");
+      });
+    });
+  }, []);
+
+  return (
+    <>
+      {/* Radio Buttons for Filtering */}
+      <div className="filter-controls">
+        <input type="radio" name="Photos" id="check1" defaultChecked="" />
+        <label htmlFor="check1">All Photos</label>
+
+        <input type="radio" name="Photos" id="check2" />
+        <label htmlFor="check2">Software Engineering</label>
+
+        <input type="radio" name="Photos" id="check3" />
+        <label htmlFor="check3">Data Analysis</label>
+
+        <input type="radio" name="Photos" id="check4" />
+        <label htmlFor="check4">Digital Marketing</label>
+
+        <input type="radio" name="Photos" id="check5" />
+        <label htmlFor="check5">Photography</label>
+      </div>
+
+      {/* Container Header */}
+      <div className="container">
+        <h1>OUR PHOTO GALLERY</h1>
+        <div className="top-content">
+          <h3>Photo Gallery</h3>
+        </div>
+      </div>
+
+      {/* Photo Gallery */}
+      <div className="photo-gallery">
+        <div className="pic software">
+          <Image
+            src="/building-410266_1920.jpg"
+            alt="Software Engineering"
+            width={230}
+           [_{{{CITATION{{{_1{](https://github.com/zennie09/HTML-CSS-Templates/tree/fd0e41a11953774d3434e97467039b27be8fa65c/Digita%20Global%2FDigitGo%20Web%20Design%2Four_work.php)
+
+
+            useEffect(() => {
+                const labels = document.querySelectorAll(".filter-controls label");
+                labels.forEach(label => {
+                  label.addEventListener("click", function() {
+                    labels.forEach(l => l.classList.remove("active"));
+                    this.classList.add("active");
+                  });
+                });
+              }, []);
